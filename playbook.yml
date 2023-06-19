@@ -1,8 +1,9 @@
+---
 - name : Configure Docker on EC2 Instances
-  hosts : all
+  hosts : 172.31.24.150
   become: true
   connection : ssh
-  tasks : 
+  tasks :
   - name: updating apt
     command : sudo apt-get update
 
@@ -16,5 +17,11 @@
     become : yes
     become_user : root
 
+  - name: remove container
+    command: sudo docker rm insure-me
+
   - name: Deploy Docker Container
-    command: docker run -itd -p 8084:8081 shubhamkushwah123/insure-me:3.0
+    command: docker tag insure-me subham742/insure-me:latest
+    command: docker run -itd -p 8082:8081 subham742/insure-me:latest
+    become : yes
+    become_user : root
