@@ -2,36 +2,42 @@
 - name: Configure Docker on EC2 Instances
   hosts: all
   become: true
+  connection: ssh
   tasks:
-    - name: Updating apt
-      become: true
-      apt:
-        update_cache: yes
+    - name: updating apt
+      command: sudo apt-get update
 
     - name: Install Docker
-      become: true
-      apt:
-        name: docker.io
-        state: present
-
-    - name: Start Docker Service
-      become: true
-      service:
-        name: docker
-        state: started
-
-    - name : stop existing containers
-      shell: docker stop $(docker ps -a -q)
-    
-    - name : delete all containers
-      shell: docker rm $(docker ps -a -q)
-
-    - name: Deploy Docker Container
-      become: true
-      command: docker tag insure-me subham742/insure-me:latest
+      command: sudo apt-get install -y docker.io
+      become: yes
       become_user: root
 
-    - name: Run Docker Container
-      become: true
-      command: docker run -itd -p 8082:8081 subham742/insure-me:latest
+    - name: Start Docker Service
+      command: sudo systemctl start docker
+      become: yes
+      become_user: root
+
+    - name: Stop existing containers
+      shell: |
+        if [[ $(docker ps -q) ]]; then
+          sudo docker stop $(docker ps -a -q)
+        else
+          echo "No running containers to stop"
+        fi
+      become: yes
+      become_user: root
+
+    - name: Delete all containers
+      shell: |
+        if [[ $(docker ps -aq) ]]; then
+          sudo docker rm $(docker ps -a -q)
+        else
+          echo "No containers to delete"
+        fi
+      become: yes
+      become_user: root
+
+    - name: Deploy Docker Container
+      command: docker run -itd -p 8089:8081 subham742/insure-me:latest
+      become: yes
       become_user: root
