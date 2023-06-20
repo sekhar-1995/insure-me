@@ -1,6 +1,6 @@
 ---
 - name: Configure Docker on EC2 Instances
-  hosts: 172.31.94.98
+  hosts: all
   become: true
   tasks:
     - name: Updating apt
