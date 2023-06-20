@@ -21,10 +21,10 @@
         state: started
 
     - name : stop existing containers
-    shell: docker stop $(docker ps -a -q)
+      shell: docker stop $(docker ps -a -q)
     
     - name : delete all containers
-    shell: docker rm $(docker ps -a -q)
+      shell: docker rm $(docker ps -a -q)
 
     - name: Deploy Docker Container
       become: true
