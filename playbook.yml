@@ -20,15 +20,11 @@
         name: docker
         state: started
 
-    - name: Stop container
-      become: true
-      command: docker stop insure-me
-      ignore_errors: yes
-
-    - name: Remove container
-      become: true
-      command: docker rm insure-me
-      ignore_errors: yes
+    - name : stop existing containers
+    shell: docker stop $(docker ps -a -q)
+    
+    - name : delete all containers
+    shell: docker rm $(docker ps -a -q)
 
     - name: Deploy Docker Container
       become: true
