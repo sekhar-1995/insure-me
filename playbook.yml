@@ -1,27 +1,41 @@
 ---
-- name : Configure Docker on EC2 Instances
-  hosts : 172.31.94.98
+- name: Configure Docker on EC2 Instances
+  hosts: 172.31.94.98
   become: true
-  connection : ssh
-  tasks :
-  - name: updating apt
-    command : sudo apt-get update
+  tasks:
+    - name: Updating apt
+      become: true
+      apt:
+        update_cache: yes
 
-  - name : Install Docker
-    command : sudo apt-get install -y docker.io
-    become : yes
-    become_user : root
+    - name: Install Docker
+      become: true
+      apt:
+        name: docker.io
+        state: present
 
-  - name : Start Docker Service
-    command : sudo systemctl start docker
-    become : yes
-    become_user : root
+    - name: Start Docker Service
+      become: true
+      service:
+        name: docker
+        state: started
 
-  - name: remove container
-    command: sudo docker rm insure-me
+    - name: Stop container
+      become: true
+      command: docker stop insure-me
+      ignore_errors: yes
 
-  - name: Deploy Docker Container
-    command: docker tag insure-me subham742/insure-me:latest
-    command: docker run -itd -p 8082:8081 subham742/insure-me:latest
-    become : yes
-    become_user : root
+    - name: Remove container
+      become: true
+      command: docker rm insure-me
+      ignore_errors: yes
+
+    - name: Deploy Docker Container
+      become: true
+      command: docker tag insure-me subham742/insure-me:latest
+      become_user: root
+
+    - name: Run Docker Container
+      become: true
+      command: docker run -itd -p 8082:8081 subham742/insure-me:latest
+      become_user: root
