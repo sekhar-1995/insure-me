@@ -30,14 +30,10 @@ pipeline {
                 sh 'sudo docker build -t insure-me .'
             }
         }
-        
-       stage("Push Docker Image To DockerHub") {
+        tage("Push Docker Image To DockerHub") {
             steps {
-                withCredentials([
-                    usernamePassword(credentialsId: 'DockerHubCRED', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DockerHubPassword')
-                ]) {
+                withCredentials([string(credentialsId: 'Docker-Hub', variable: 'DockerHubForInsure-me')]){
                     script {
-                        sh "echo ${DockerHubPassword} | sudo docker login -u ${DOCKER_USERNAME} --password-stdin"
                         sh "sudo docker tag insure-me subham742/insure-me:latest"
                         sh "sudo docker push subham742/insure-me:latest"
                     }
