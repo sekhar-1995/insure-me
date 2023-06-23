@@ -38,6 +38,6 @@
       become_user: root
 
     - name: Deploy Docker Container
-      command: docker run -itd -p 8089:8081 subham742/insure-me:latest
+      command: docker run -itd -p 8082:8081 subham742/insure-me:latest
       become: yes
       become_user: root
